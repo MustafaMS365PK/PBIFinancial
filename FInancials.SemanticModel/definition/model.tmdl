@@ -13,7 +13,7 @@ annotation PBIDesktopVersion = 2.143.1204.0 (25.05)+23c84aace645781dd62b8a26eb04
 
 annotation PBI_QueryOrder = ["Sales","Segment","Country","Product","_Measures"]
 
-annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode"]
+annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode","TMDL-Extension"]
 
 ref table Sales
 ref table Segment

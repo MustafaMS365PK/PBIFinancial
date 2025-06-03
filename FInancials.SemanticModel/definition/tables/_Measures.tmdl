@@ -2,36 +2,44 @@
 table _Measures
 	lineageTag: cfefacf1-305d-4557-bfec-6868b80f2bb7
 
+	/// Calculates the total sales amount by summing the Sales column in the Sales table.
 	measure 'Total Sales' = sum(Sales[Sales])
 		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
 		lineageTag: 679cbd95-69db-4dc0-a01a-0e3f69e5727e
 
+	/// Calculates the total profit by summing the Profit column in the Sales table.
 	measure 'Total Profit' = sum(Sales[Profit])
 		lineageTag: bd059eaa-eca1-4941-9a9b-83b3331c6e66
 
 		formatStringDefinition = "\$#,0.00;(\$#,0.00);\$#,0.00"
 
+	/// This DAX measure calculates the average sale price of products or transactions in your dataset. It takes all the values from the Sale Price column in the Sales table and finds their average, helping you understand the typical price at which items are sold. This is useful for identifying pricing trends, comparing performance over time, or making data-driven decisions about pricing strategies.
 	measure 'Average Sale Price' = average(Sales[Sale Price])
 		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
 		lineageTag: b1a249d1-b9c7-4e16-9b39-652484ac584d
 
+	/// Calculates the profit margin as total profit divided by total gross sales.
 	measure 'Profit Margin' = divide(sum(Sales[Profit]), sum(Sales[Gross Sales]))
 		formatString: #,0.00%;-#,0.00%;#,0.00%
 		lineageTag: f542c2e3-f199-4f04-a947-3ea252a46852
 
+	/// Calculates the percentage of discounts relative to gross sales.
 	measure 'Discount Percentage' = divide(sum(Sales[Discounts]), sum(Sales[Gross Sales]))
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 7a455445-7b41-463a-ac76-1812cfcb4778
 
+	/// Calculates the total Cost of Goods Sold (COGS) by summing the COGS column in the Sales table.
 	measure 'Total COGS' = sum(Sales[COGS])
 		lineageTag: 4deddffd-9839-4fcc-bd5c-fba9a520c536
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// Calculates the growth rate of units sold compared to the previous period.
 	measure 'Units Sold Growth' = ([Total Units Sold] - [Previous Period Units Sold]) / [Previous Period Units Sold]
 		formatString: 0.00%;-0.00%;0.00%
 		lineageTag: 973f35c2-e3e8-4ca9-8a01-f00a15f36362
 
+	/// Calculates the total units sold in the previous period (month by default).
 	measure 'Previous Period Units Sold' =
 			CALCULATE(
 			    SUM(Sales[Units Sold]),
@@ -41,6 +49,7 @@ table _Measures
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	/// Calculates the total number of units sold by summing the Units Sold column in the Sales table.
 	measure 'Total Units Sold' = SUM(Sales[Units Sold])
 		lineageTag: 6900f304-fa2b-442b-9ec2-d89eabec56b4
 
