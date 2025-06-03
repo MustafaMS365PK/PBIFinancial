@@ -139,7 +139,7 @@ table Sales
 		mode: import
 		source =
 				let
-				 Source = Excel.Workbook(File.Contents("C:\Program Files\WindowsApps\Microsoft.MicrosoftPowerBIDesktop_2.141.1558.0_x64__8wekyb3d8bbwe\bin\SampleData\Financial Sample.xlsx"), null, true),
+				    Source = Excel.Workbook(Web.Contents("https://ms365pk-my.sharepoint.com/personal/mustafa_ms365_com_pk/Documents/Temp/Financial%20Sample.xlsx"), null, true),
 				    financials_Table = Source{[Item="financials",Kind="Table"]}[Data],
 				    #"Changed Type" = Table.TransformColumnTypes(financials_Table,{{"Segment", type text}, {"Country", type text}, {"Product", type text}, {"Discount Band", type text}, {"Units Sold", type number}, {"Manufacturing Price", Int64.Type}, {"Sale Price", Int64.Type}, {"Gross Sales", type number}, {"Discounts", type number}, {"Sales", type number}, {"COGS", type number}, {"Profit", type number}, {"Date", type date}, {"Month Number", Int64.Type}, {"Month Name", type text}, {"Year", Int64.Type}}),
 				    #"Merged Queries" = Table.NestedJoin(#"Changed Type", {"Segment"}, Segment, {"Segment"}, "Segment.1", JoinKind.LeftOuter),
