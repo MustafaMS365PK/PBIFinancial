@@ -1,0 +1,16 @@
+EVALUATE
+	SELECTCOLUMNS(
+		TOPN(
+			1000,
+			'Data Dictionary',
+			'Data Dictionary'[Type],
+			ASC
+		),
+		'Data Dictionary'[Type],
+		'Data Dictionary'[Name],
+		'Data Dictionary'[Description],
+		'Data Dictionary'[Location],
+		'Data Dictionary'[Expression],
+		'Data Dictionary'[DataType]
+	)
+	ORDER BY 'Data Dictionary'[Type] ASC

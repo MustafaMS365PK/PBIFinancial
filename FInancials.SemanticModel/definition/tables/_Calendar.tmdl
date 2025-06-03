@@ -1,0 +1,149 @@
+/// Calendar Table
+table _Calendar
+	lineageTag: 596dc2f8-0d42-40a3-86c4-991131c1637d
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: Short Date
+		lineageTag: 37a9e567-926c-4773-b56c-b775f4742882
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		formatString: 0
+		lineageTag: 19fdbb0d-2b63-4c41-932d-9cdfb1a4bd23
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		lineageTag: 141b2f1c-3a49-40b1-a979-7942bd6b25e0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month]
+		sortByColumn: 'Month Number'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Number'
+		formatString: 0
+		lineageTag: 2a29339a-c2ec-476d-a7b7-90b7452c1a12
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Month Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		lineageTag: e2908929-be6c-4cc8-9b39-23e0d7688f8d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week of Year'
+		formatString: 0
+		lineageTag: ec34119f-2ce4-4763-aa88-fce942b67a42
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Week of Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day of Week'
+		lineageTag: b7c51aab-d8b8-459c-9ea5-10821e435deb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Day of Week]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day of Week Number'
+		formatString: 0
+		lineageTag: 4bf3b666-5df4-404b-ab78-0058a994c923
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Day of Week Number]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Weekend'
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: de74c797-f729-4fe0-b4ad-74189c76ee98
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Is Weekend]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fiscal Year'
+		lineageTag: 931b3efd-67a3-4f06-a608-f27e4207ebb6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Fiscal Year]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fiscal Quarter'
+		lineageTag: bf3141aa-f071-4df4-8151-56f90be28f02
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Fiscal Quarter]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week Start'
+		formatString: General Date
+		lineageTag: 2558af50-3277-4aa5-9900-affc715aa220
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Week Start]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week End'
+		formatString: General Date
+		lineageTag: 33fcadcd-0af1-4eb5-9c6a-305915950c58
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Week End]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year-Month
+		lineageTag: ba51da38-b2aa-43a1-b90f-f24bd721c4ad
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Year-Month]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Calendar = calculated
+		mode: import
+		source =
+				ADDCOLUMNS(
+				    CALENDARAUTO(),
+				    "Year", YEAR([Date]),
+				    "Month", FORMAT([Date], "MMMM"),
+				    "Month Number", MONTH([Date]),
+				    "Quarter", "Q" & FORMAT([Date], "Q"),
+				    "Week of Year", WEEKNUM([Date]),
+				    "Day of Week", FORMAT([Date], "dddd"),
+				    "Day of Week Number", WEEKDAY([Date]),
+				    "Is Weekend", IF(WEEKDAY([Date], 2) > 5, TRUE(), FALSE()),
+				    "Fiscal Year", "FY" & YEAR([Date]) + IF(MONTH([Date]) > 6, 1, 0),
+				    "Fiscal Quarter", "FQ" & INT((MONTH([Date]) + 5) / 3),
+				    "Week Start", [Date] - WEEKDAY([Date], 2) + 1,
+				    "Week End", [Date] - WEEKDAY([Date], 2) + 7,
+				    "Year-Month", FORMAT([Date], "YYYY-MM")
+				)
+
+	annotation PBI_Id = a05749ba55a74b6ea3ba062bcc9d0cad
+

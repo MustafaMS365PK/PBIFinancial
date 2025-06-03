@@ -1,0 +1,159 @@
+/// Sales Fact Table
+table Sales
+	lineageTag: 15e368de-97a2-4859-aa9d-564e0a01d007
+
+	column 'Discount Band'
+		dataType: string
+		lineageTag: 64d5ea19-1917-4031-b3c7-a63ce0a30f3d
+		summarizeBy: none
+		sourceColumn: Discount Band
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Units Sold'
+		dataType: double
+		lineageTag: 356f0731-7cd9-424e-a3b4-a617062e270e
+		summarizeBy: sum
+		sourceColumn: Units Sold
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Manufacturing Price'
+		dataType: int64
+		formatString: 0
+		lineageTag: 896ae860-d16f-46ec-8c13-8d42c63a4882
+		summarizeBy: sum
+		sourceColumn: Manufacturing Price
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sale Price'
+		dataType: int64
+		formatString: 0
+		lineageTag: 17275644-9400-4c23-bf8e-a29aa87c7136
+		summarizeBy: sum
+		sourceColumn: Sale Price
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Gross Sales'
+		dataType: double
+		lineageTag: 284ab5da-4685-4689-ad62-b30ed964339c
+		summarizeBy: sum
+		sourceColumn: Gross Sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Discounts
+		dataType: double
+		lineageTag: 6cd7e8ac-1861-4c25-8d8b-07c9b8d31156
+		summarizeBy: sum
+		sourceColumn: Discounts
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sales
+		dataType: double
+		lineageTag: 6e08fce1-d10c-45fd-9c1f-b8cf4790baf9
+		summarizeBy: sum
+		sourceColumn: Sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column COGS
+		dataType: double
+		lineageTag: 83062853-ae2e-4cbd-8337-e0fbce14cfd5
+		summarizeBy: sum
+		sourceColumn: COGS
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Profit
+		dataType: double
+		lineageTag: 9b477619-b232-4510-8e22-b5edc27349e0
+		summarizeBy: sum
+		sourceColumn: Profit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SaleDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: f19e1ea3-02d1-414f-a077-334e88c45d64
+		summarizeBy: none
+		sourceColumn: SaleDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column SegmentID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1f03c388-2d26-4d36-97bf-8950d5a55c3e
+		summarizeBy: none
+		sourceColumn: SegmentID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CountryID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: eacc7f46-9be2-461f-86ed-72a514520f87
+		summarizeBy: none
+		sourceColumn: CountryID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 504cb6f1-37c4-4ca5-8487-7655c94141a0
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Sales = m
+		mode: import
+		source =
+				let
+				 Source = Excel.Workbook(File.Contents("C:\Program Files\WindowsApps\Microsoft.MicrosoftPowerBIDesktop_2.141.1558.0_x64__8wekyb3d8bbwe\bin\SampleData\Financial Sample.xlsx"), null, true),
+				    financials_Table = Source{[Item="financials",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(financials_Table,{{"Segment", type text}, {"Country", type text}, {"Product", type text}, {"Discount Band", type text}, {"Units Sold", type number}, {"Manufacturing Price", Int64.Type}, {"Sale Price", Int64.Type}, {"Gross Sales", type number}, {"Discounts", type number}, {"Sales", type number}, {"COGS", type number}, {"Profit", type number}, {"Date", type date}, {"Month Number", Int64.Type}, {"Month Name", type text}, {"Year", Int64.Type}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type", {"Segment"}, Segment, {"Segment"}, "Segment.1", JoinKind.LeftOuter),
+				    SegmentID = Table.ExpandTableColumn(#"Merged Queries", "Segment.1", {"SegmentID"}, {"SegmentID"}),
+				    #"Merged Queries1" = Table.NestedJoin(SegmentID, {"Country"}, Country, {"Country"}, "Country.1", JoinKind.LeftOuter),
+				    CountryID = Table.ExpandTableColumn(#"Merged Queries1", "Country.1", {"CountryID"}, {"CountryID"}),
+				    #"Merged Queries2" = Table.NestedJoin(CountryID, {"Product"}, Product, {"Product"}, "Product.1", JoinKind.LeftOuter),
+				    ProductID = Table.ExpandTableColumn(#"Merged Queries2", "Product.1", {"ProductID"}, {"ProductID"}),
+				    #"Removed Other Columns" = Table.SelectColumns(ProductID,{"Discount Band", "Units Sold", "Manufacturing Price", "Sale Price", "Gross Sales", "Discounts", "Sales", "COGS", "Profit", "Date", "SegmentID", "CountryID", "ProductID"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Other Columns",{{"Date", "SaleDate"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

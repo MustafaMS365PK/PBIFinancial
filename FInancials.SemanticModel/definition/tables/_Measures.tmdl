@@ -1,0 +1,70 @@
+/// Measures Table
+table _Measures
+	lineageTag: cfefacf1-305d-4557-bfec-6868b80f2bb7
+
+	measure 'Total Sales' = sum(Sales[Sales])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 679cbd95-69db-4dc0-a01a-0e3f69e5727e
+
+	measure 'Total Profit' = sum(Sales[Profit])
+		lineageTag: bd059eaa-eca1-4941-9a9b-83b3331c6e66
+
+		formatStringDefinition = "\$#,0.00;(\$#,0.00);\$#,0.00"
+
+	measure 'Average Sale Price' = average(Sales[Sale Price])
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: b1a249d1-b9c7-4e16-9b39-652484ac584d
+
+	measure 'Profit Margin' = divide(sum(Sales[Profit]), sum(Sales[Gross Sales]))
+		formatString: #,0.00%;-#,0.00%;#,0.00%
+		lineageTag: f542c2e3-f199-4f04-a947-3ea252a46852
+
+	measure 'Discount Percentage' = divide(sum(Sales[Discounts]), sum(Sales[Gross Sales]))
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 7a455445-7b41-463a-ac76-1812cfcb4778
+
+	measure 'Total COGS' = sum(Sales[COGS])
+		lineageTag: 4deddffd-9839-4fcc-bd5c-fba9a520c536
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Units Sold Growth' = ([Total Units Sold] - [Previous Period Units Sold]) / [Previous Period Units Sold]
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 973f35c2-e3e8-4ca9-8a01-f00a15f36362
+
+	measure 'Previous Period Units Sold' =
+			CALCULATE(
+			    SUM(Sales[Units Sold]),
+			    DATEADD('_Calendar'[Date], -1, MONTH) -- Change "MONTH" to "YEAR" or "DAY" as needed
+			)
+		lineageTag: 44689533-1977-495d-8b76-f4f4e363a350
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Units Sold' = SUM(Sales[Units Sold])
+		lineageTag: 6900f304-fa2b-442b-9ec2-d89eabec56b4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Column1
+		dataType: string
+		isHidden
+		lineageTag: 69cd0aab-0e92-48b3-9196-31af605b66c4
+		summarizeBy: none
+		sourceColumn: Column1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

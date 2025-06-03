@@ -1,0 +1,16 @@
+relationship AutoDetected_c7be1ee8-62a8-4da4-9e8b-d0e63294665f
+	fromColumn: Sales.SegmentID
+	toColumn: Segment.SegmentID
+
+relationship AutoDetected_be4dfda7-877f-47a3-abd5-c869201ec70e
+	fromColumn: Sales.CountryID
+	toColumn: Country.CountryID
+
+relationship AutoDetected_69aba896-4d23-4c6e-8bff-c3dfa8f970ff
+	fromColumn: Sales.ProductID
+	toColumn: Product.ProductID
+
+relationship e53aa00b-fed4-2e85-da6f-bfb911b6e813
+	fromColumn: Sales.SaleDate
+	toColumn: _Calendar.Date
+
